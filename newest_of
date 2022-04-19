@@ -7,7 +7,7 @@ DISPDEV=/dev/stderr
 if [ $# -eq 0 -o "$1" == "-h" -o "$1" == "--help" ]; then
     mypath=$(dirname "$0")
     if [ -f "$mypath/README.md" ]; then
-        cat "$mypath/README.md"
+        sed 's/^```//' "$mypath/README.md"
     else
         echo "Usage: $0 [-y] FILE [FILE [FILE]]..."
         echo "Print out latest modified filename of bunch of filenames"

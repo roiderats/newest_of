@@ -1,4 +1,4 @@
-The purpose of the script:
+```The purpose of the script:
 Print newest one of files given as arguments (filenames can contain spaces or there's a bug)
 
 Use case:
@@ -9,4 +9,4 @@ Usage: newest_of [-y] FILE [FILE [FILE]]...
 Print out latest modified filename of bunch of filenames
   -y, --yes  Don't ask for confirmation
   FILE       Everything is a file
-
+```
