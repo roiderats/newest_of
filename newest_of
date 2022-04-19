@@ -1,0 +1,58 @@
+#!/bin/bash
+
+DISPDEV=/dev/stderr
+
+#set -e
+
+if [ $# -eq 0 -o "$1" == "-h" -o "$1" == "--help" ]; then
+    mypath=$(dirname "$0")
+    if [ -f "$mypath/README.md" ]; then
+        cat "$mypath/README.md"
+    else
+        echo "Usage: $0 [-y] FILE [FILE [FILE]]..."
+        echo "Print out latest modified filename of bunch of filenames"
+        echo "  -y, --yes  Don't ask for confirmation"
+        echo "  FILE       Everything is a file"
+    fi
+    exit $(true)
+fi
+
+if [ "$1" == "-y" -o "$1" == "--yes" ]; then
+    ASK=false
+    shift
+else
+    ASK=true
+fi
+
+neweststamp=0
+newestfile="$1"
+for target in "$@"; do
+    test -e "$target" || continue
+    currstamp=$(stat --printf="%Y" "$target")
+    if [ $currstamp -gt $neweststamp ]; then
+        neweststamp=$currstamp
+        newestfile="$target"
+    fi
+done
+
+if [ ! -e "$newestfile" ]; then
+    exit 1
+fi
+
+if $ASK; then
+    while true; do
+        echo "Newest found: $newestfile" > $DISPDEV
+        read -e -i "y" -p "Continue?(y/n) " answer > $DISPDEV
+        case $answer in
+            y ) echo $newestfile
+                break ;;
+            n ) kill -SIGINT $$
+                echo You may have disabled SIGINT, kill me gently
+        esac
+    done
+else
+    # Don't ask
+    echo $newestfile
+fi
+
+#eof
